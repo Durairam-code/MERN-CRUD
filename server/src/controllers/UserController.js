@@ -34,8 +34,12 @@ module.exports = {
       phone_number: req.body.phone_number,
     })
       .then((user) => {
-        if (user && user.password === req.body.password) {
-          res.send({ status: "Welcome!" + user.phone_number });
+        if (user) {
+          if (user.password === req.body.password) {
+            res.send({ status: "Welcome!" + user.phone_number });
+          } else {
+            res.send({ error: "Password is incorrect" });
+          }
         } else {
           res.send({ error: "User does not exist" });
         }

@@ -20,22 +20,5 @@ export const login = (user) => {
     .then((response) => {
       localStorage.setItem("user", response.data);
       return response.data;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
-
-export const getProfile = (user) => {
-  return axios
-    .get("users/profile", {
-      //headers: { Authorization: ` ${this.getToken()}` }
-    })
-    .then((response) => {
-      console.log(response);
-      return response.data;
-    })
-    .catch((err) => {
-      console.log(err);
     });
 };

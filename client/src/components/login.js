@@ -19,10 +19,12 @@ export default class Login extends React.Component {
       password: "",
       phone_numberValid: false,
       passwordValid: false,
+      messagebox: true,
+      messageboxContent: "",
     };
   }
   onChangePhone_number = (e) => {
-    if (isNaN(e.target.value) && e.target.value.length !== 10) {
+    if (!isNaN(e.target.value) && e.target.value.length !== 10) {
       this.setState({
         phone_number: e.target.value,
         phone_numberValid: "Enter Valid Phone number",
@@ -55,13 +57,34 @@ export default class Login extends React.Component {
       password: this.state.password,
     };
 
-    if (!this.state.phone_numberValid && !this.state.passwordValid) {
+    if (this.state.phone_number !== "" && this.state.password !== "") {
       login(user).then((res) => {
-        if (res) {
+        if (res.status) {
+          this.setState({ phone_number: "", password: "" });
           localStorage.setItem("user", res.data);
           this.props.history.push(`/home`);
+        } else {
+          this.setState({
+            messagebox: false,
+            messageboxContent: res.error,
+          });
+          setTimeout(() => {
+            this.setState({
+              messagebox: true,
+            });
+          }, 700);
         }
       });
+    } else {
+      this.setState({
+        messagebox: false,
+        messageboxContent: "Fields Cannot empty",
+      });
+      setTimeout(() => {
+        this.setState({
+          messagebox: true,
+        });
+      }, 700);
     }
   };
   render() {
@@ -108,6 +131,12 @@ export default class Login extends React.Component {
           <Message>
             New to us ? <a href="/register">Sign Up</a>
           </Message>
+          <Message
+            color="red"
+            size="mini"
+            content={this.state.messageboxContent}
+            hidden={this.state.messagebox}
+          ></Message>
         </Grid.Column>
       </Grid>
     );

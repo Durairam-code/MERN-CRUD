@@ -19,6 +19,9 @@ export default class Register extends React.Component {
       password: "",
       phone_numberValid: false,
       passwordValid: false,
+      messagebox: true,
+      messageboxContent: "",
+      messageboxColor: "red",
     };
   }
   onChangePhone_number = (e) => {
@@ -54,12 +57,34 @@ export default class Register extends React.Component {
       phone_number: this.state.phone_number,
       password: this.state.password,
     };
-
-    register(newUser).then((res) => {
-      if (res) {
-        this.props.history.push(`/`);
-      }
-    });
+    if (this.state.phone_number !== "" && this.state.password !== "") {
+      register(newUser).then((res) => {
+        if (res.status) {
+          this.setState({ phone_number: "", password: "" });
+          this.props.history.push(`/`);
+        } else {
+          this.setState({
+            messagebox: false,
+            messageboxContent: res.error,
+          });
+          setTimeout(() => {
+            this.setState({
+              messagebox: true,
+            });
+          }, 700);
+        }
+      });
+    } else {
+      this.setState({
+        messagebox: false,
+        messageboxContent: "Fields Cannot empty",
+      });
+      setTimeout(() => {
+        this.setState({
+          messagebox: true,
+        });
+      }, 700);
+    }
   };
   render() {
     return (
@@ -110,6 +135,12 @@ export default class Register extends React.Component {
           <Message>
             Back to <a href="/">Sign In</a>
           </Message>
+          <Message
+            color="red"
+            size="mini"
+            content={this.state.messageboxContent}
+            hidden={this.state.messagebox}
+          ></Message>
         </Grid.Column>
       </Grid>
     );
